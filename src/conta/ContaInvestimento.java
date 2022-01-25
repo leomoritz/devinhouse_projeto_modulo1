@@ -34,4 +34,22 @@ public class ContaInvestimento extends Conta implements SimulacaoRendimentoConta
 		return investimento.getTaxaRendimento() * qtdMeses;
 	}
 
+	@Override
+	public Boolean saque(double valor) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean deposito(double valor) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean transferir(Conta destino, Double valor) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
