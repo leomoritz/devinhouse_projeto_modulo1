@@ -13,7 +13,7 @@ public class Banco {
 	private final Set<Agencia> agencias;
 	private final Set<Conta> contas;
 	private final Set<Transacao> historicoTransacoes;
-	
+
 	public Banco(String nome, String cnpj) {
 		this.nome = nome;
 		this.cnpj = cnpj;
@@ -41,6 +41,23 @@ public class Banco {
 	public Set<Transacao> getHistoricoTransacoes() {
 		return historicoTransacoes;
 	}
-	
-	
+
+	/* Cadastros */
+
+	public Boolean cadastrarConta() {
+		return null;
+	}
+
+	public Boolean cadastrarAgencia() {
+		return null;
+	}
+
+	public Boolean cadastrarInvestimento() {
+		return null;
+	}
+
+	public Boolean alterarDadosCadastraisConta() {
+		return null;
+	}
+
 }

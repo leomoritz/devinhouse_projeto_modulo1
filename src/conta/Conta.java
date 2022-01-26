@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 import banco.Agencia;
 import enums.TipoConta;
+import enums.TipoOperacao;
+import excecoes.DepositoNegativoException;
 import util.UtilGeradorCodigoSequencial;
 
 public abstract class Conta {
 
-	private final String nome;
+	private String nome;
 	private final String cpf;
 	private final TipoConta tipoConta;
 	private final Integer conta;
@@ -31,6 +33,22 @@ public abstract class Conta {
 		this.extratosConta = new HashSet<>();
 	}
 
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public TipoConta getTipoConta() {
+		return tipoConta;
+	}
+
+	public Integer getConta() {
+		return conta;
+	}
+
 	public Agencia getAgencia() {
 		return agencia;
 	}
@@ -47,48 +65,57 @@ public abstract class Conta {
 		this.rendaMensal = rendaMensal;
 	}
 
-	public String getNome() {
-		return nome;
+	public Double getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(Double saldo) {
+		this.saldo = saldo;
 	}
 
 	public String getCpf() {
 		return cpf;
 	}
-	
-	public TipoConta getTipoConta() {
-		return tipoConta;
-	}
 
-	public Integer getConta() {
-		return conta;
-	}
-
-	public Double getSaldo() {
-		return saldo;
-	}
-	
-	protected void setSaldo(Double valor) {
-		this.saldo -= valor;
-	}
-	
 	public Set<ExtratoConta> getExtratosConta() {
 		return extratosConta;
 	}
-	
-	public Set<ExtratoConta> extrato(LocalDate dataInicio, LocalDate dataFinal){
-		return getExtratosConta()
-				.stream()
-				.filter(extrato -> extrato.getDataHoraOperacao().isAfter(dataInicio) 
-						&& 
-						extrato.getDataHoraOperacao().isBefore(dataFinal))
-				.collect(Collectors.toSet());
+
+	public abstract Boolean saque(Double valor) throws Exception;
+
+	public Boolean deposito(Double valor) throws Exception {
+
+		if (valor > 0.0) {
+			setSaldo(getSaldo() + valor);
+			getExtratosConta().add(new ExtratoConta(getAgencia(), this, TipoOperacao.DEPOSITO, valor));
+			return true;
+		}
+
+		throw new DepositoNegativoException();
+
 	}
 
-	public abstract Boolean saque(double valor) throws Exception;
+	/*
+	 * O método transferir reaproveita os métodos sacar e depósito, bem como suas
+	 * respectivas exceções
+	 */
+	
+	public Boolean transferir(Conta destino, Double valor) throws Exception {
 
-	public abstract Boolean deposito(double valor) throws Exception;
+		if (saque(valor)) {
+			destino.deposito(valor);
+			getExtratosConta().add(new ExtratoConta(getAgencia(), this, destino.getAgencia(), destino,
+					TipoOperacao.TRANSFERENCIA, valor));
+			return true;
+		}
 
-	public abstract Boolean transferir(Conta destino, Double valor) throws Exception;
+		throw new Exception("Não foi possível realizar a transação. Entre em contato com sua agência para ajuda.");
+	}
+
+	public Set<ExtratoConta> extrato(LocalDate dataInicio, LocalDate dataFinal) {
+		return getExtratosConta().stream().filter(extrato -> extrato.getDataHoraOperacao().isAfter(dataInicio)
+				&& extrato.getDataHoraOperacao().isBefore(dataFinal)).collect(Collectors.toSet());
+	}
 
 	@Override
 	public String toString() {
