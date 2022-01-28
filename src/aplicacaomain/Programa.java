@@ -11,7 +11,7 @@ public class Programa {
 
 	public static void main(String[] args) {
 
-		Banco banco = new Banco("DEVinMoney", "97.679.103/0001-61");
+		Banco banco = new Banco();
 
 		Agencia agenciaFlorianopolis = new Agencia(001, "Florianópolis");
 
@@ -29,8 +29,8 @@ public class Programa {
 		Conta contaPoupanca2 = new ContaPoupanca("Bruna de Oliveira Rosa", "09988020937", agenciaFlorianopolis, 2500.00,
 				1500.00);
 
-		Conta contaInvestimento = new ContaInvestimento("Leônidas Guilherme Moritz Pereira Rosa", "09874553979",
-				agenciaFlorianopolis, 3500.00, 1500.00);
+		ContaInvestimento contaInvestimento = new ContaInvestimento("Leônidas Guilherme Moritz Pereira Rosa", "09874553979",
+				agenciaFlorianopolis, 3500.00, 0.00);
 
 		Conta contaInvestimento2 = new ContaInvestimento("Bruna de Oliveira Rosa", "09988020937", agenciaFlorianopolis,
 				2500.00, 1500.00);
@@ -45,7 +45,7 @@ public class Programa {
 		/*
 		 * for (Conta conta : banco.getContas()) { System.out.println(conta.toString());
 		 * }
-		 */
+		
 
 		System.out.println("Saldo origem antes: " + contaCorrente.getSaldo());
 		System.out.println("Cheque Especial origem antes: " + contaCorrente.getChequeEspecial());
@@ -60,7 +60,24 @@ public class Programa {
 
 		System.out.println("Saldo conta origem: " + contaCorrente.getSaldo());
 		System.out.println("Saldo conta destino: " + contaCorrente2.getSaldo());
-
+		
+		OpcaoInvestimento opcaoInvestimento = new OpcaoInvestimento(TipoInvestimento.FUNDOS,"OpcaoInvestimento X", 0.47);
+		Investimento novoInvestimento = new Investimento(opcaoInvestimento, LocalDate.now().minusMonths(11), 1000.00);
+		contaInvestimento.adicionarInvestimento(novoInvestimento);
+		
+		/*try {
+			contaInvestimento.resgatarValorInvestimento(opcaoInvestimento);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		try {
+			System.out.println("Investimento: " + contaInvestimento.getInvestimento("X"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

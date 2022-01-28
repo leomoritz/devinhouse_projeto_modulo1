@@ -1,5 +1,6 @@
 package conta;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +10,7 @@ import banco.Agencia;
 import enums.TipoConta;
 import enums.TipoOperacao;
 import excecoes.DepositoNegativoException;
+import excecoes.TransacaoIlegalException;
 import util.UtilGeradorCodigoSequencial;
 
 public abstract class Conta {
@@ -99,8 +101,21 @@ public abstract class Conta {
 	 * O método transferir reaproveita os métodos sacar e depósito, bem como suas
 	 * respectivas exceções
 	 */
-	
+
 	public Boolean transferir(Conta destino, Double valor) throws Exception {
+
+		DayOfWeek diaAtualDaSemana = LocalDate.now().getDayOfWeek();
+
+		if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
+			throw new TransacaoIlegalException(
+					"Transação negada. Não é possível realizar transferências no Sábado ou Domingo.");
+		}
+
+		if (destino == this) {
+			throw new TransacaoIlegalException(
+					"Transação negada. Não é possível realizar transferências para si próprio. Utilize a operação de "
+					+ "depósito.");
+		}
 
 		if (saque(valor)) {
 			destino.deposito(valor);
@@ -109,7 +124,7 @@ public abstract class Conta {
 			return true;
 		}
 
-		throw new Exception("Não foi possível realizar a transação. Entre em contato com sua agência para ajuda.");
+		throw new TransacaoIlegalException();
 	}
 
 	public Set<ExtratoConta> extrato(LocalDate dataInicio, LocalDate dataFinal) {
@@ -119,8 +134,8 @@ public abstract class Conta {
 
 	@Override
 	public String toString() {
-		return "Conta [nome=" + nome + ", cpf=" + cpf + ", tipoConta=" + tipoConta + ", conta=" + conta + ", agencia="
-				+ agencia + ", rendaMensal=" + rendaMensal + ", saldo=" + saldo + "]";
+		return "\nConta: " + conta + "\nNome: " + nome + "\nCPF: " + cpf + "\nTipo Conta: " + tipoConta + "\nAgencia: "
+				+ agencia + "\nRenda Mensal: " + rendaMensal + "\nSaldo Conta: " + saldo;
 	}
 
 }

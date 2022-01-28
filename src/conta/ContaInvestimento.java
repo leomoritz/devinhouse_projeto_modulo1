@@ -1,6 +1,7 @@
 package conta;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import banco.Agencia;
@@ -13,22 +14,35 @@ import investimento.Investimento;
 public class ContaInvestimento extends Conta implements SimulacaoRendimentoConta {
 
 	private final Set<Investimento> investimentosConta;
-
+	
 	public ContaInvestimento(String nome, String cpf, Agencia agencia, Double rendaMensal, Double saldo) {
 		super(nome, cpf, TipoConta.INVESTIMENTO, agencia, rendaMensal, saldo);
-		this.investimentosConta = new HashSet<Investimento>();
+		this.investimentosConta = new HashSet<>();
 	}
 
 	public Set<Investimento> getInvestimentosConta() {
 		return investimentosConta;
 	}
+	
+	public Investimento getInvestimento(String nomeInvestimento) throws Exception {
 
-	public void adicionarInvestimento(Investimento novoInvestimento) {
-		getInvestimentosConta().add(novoInvestimento);
+		if (nomeInvestimento == null) {
+			throw new IllegalArgumentException("É necessário informar o investimento que deseja buscar.");
+		}
+
+		Optional<Investimento> investimento = getInvestimentosConta().stream()
+				.filter(i -> i.getOpcaoInvestimento().getNomeInvestimento().contains(nomeInvestimento)).findFirst();
+
+		if (investimento.isEmpty()) {
+			throw new Exception("Não foi encontrado nenhum investimento com este nome na conta informada.");
+		}
+
+		return investimento.get();
 	}
 
-	public Double mostrarRendimentoAnualInvestimento(Investimento investimento) {
-		return investimento.getRendimentoAnual();
+	public void adicionarInvestimento(Investimento novoInvestimento) throws Exception {
+		getInvestimentosConta().add(novoInvestimento);
+		deposito(novoInvestimento.getValorInvestido());
 	}
 
 	@Override
@@ -46,10 +60,16 @@ public class ContaInvestimento extends Conta implements SimulacaoRendimentoConta
 
 		throw new SaldoInsuficienteException();
 	}
-	
+
 	@Override
-	public double simulaRendimentoConta(int qtdMeses, Investimento investimento) {
-		return investimento.getTaxaRendimento() * qtdMeses;
+	public double simulaRendimentoConta(int qtdMeses, double taxaRendimento) {
+
+		if (qtdMeses <= 0.0 || taxaRendimento <= 0.0) {
+			throw new IllegalArgumentException("Valor inválido para esta operação. "
+					+ "A quantidade de meses e a taxa de rendimento precisam ser maior que zero");
+		}
+
+		return taxaRendimento * qtdMeses;
 	}
 
 }

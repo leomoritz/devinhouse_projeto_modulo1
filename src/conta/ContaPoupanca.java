@@ -5,9 +5,8 @@ import enums.TipoConta;
 import enums.TipoOperacao;
 import excecoes.SaldoInsuficienteException;
 import interfaces.SimulacaoRendimentoConta;
-import investimento.Investimento;
 
-public class ContaPoupanca extends Conta implements SimulacaoRendimentoConta{
+public class ContaPoupanca extends Conta implements SimulacaoRendimentoConta {
 
 	public ContaPoupanca(String nome, String cpf, Agencia agencia, Double rendaMensal, Double saldo) {
 		super(nome, cpf, TipoConta.POUPANCA, agencia, rendaMensal, saldo);
@@ -30,9 +29,15 @@ public class ContaPoupanca extends Conta implements SimulacaoRendimentoConta{
 	}
 
 	@Override
-	public double simulaRendimentoConta(int qtdMeses, Investimento investimento) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double simulaRendimentoConta(int qtdMeses, double taxaRendimento) {
+
+		if (qtdMeses <= 0.0 || taxaRendimento <= 0.0) {
+			throw new IllegalArgumentException(
+					"Valor inválido para esta operação. "
+					+ "A quantidade de meses e a taxa de rendimento precisam ser maior que zero");
+		}
+
+		return taxaRendimento * qtdMeses;
 	}
 
 }
