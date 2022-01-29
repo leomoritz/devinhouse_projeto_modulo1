@@ -201,26 +201,22 @@ public class Banco {
 	}
 
 	public String listaTotalInvestimentosContas() {
-		
-		Set<Conta> contasInvestimento =  getContas()
-										.stream()
-										.filter(conta -> conta.getTipoConta().equals(TipoConta.INVESTIMENTO))
-										.collect(Collectors.toSet());
-		
+
+		Set<Conta> contasInvestimento = getContas().stream()
+				.filter(conta -> conta.getTipoConta().equals(TipoConta.INVESTIMENTO)).collect(Collectors.toSet());
+
 		Map<Conta, Double> totalInvestimentosConta = new HashMap<>();
-		
+
 		for (Conta i : contasInvestimento) {
 			totalInvestimentosConta.put(i, i.getSaldo());
 		}
-		
+
 		return "Relatório Total Investimentos da Conta:" + totalInvestimentosConta.entrySet().stream().toString();
 
 	}
-	
+
 	public String listarRelatorioTransacoesConta(Conta conta) {
 		return "Relatório de Transações da Conta:" + getHistoricoTransacoes().toString();
 	}
-	
-	
 
 }
