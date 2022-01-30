@@ -14,16 +14,17 @@ import investimento.Investimento;
 public class ContaInvestimento extends Conta implements SimulacaoRendimentoConta {
 
 	private final Set<Investimento> investimentosConta;
-	
-	public ContaInvestimento(String nome, String cpf, Agencia agencia, Double rendaMensal, Double saldo) {
-		super(nome, cpf, TipoConta.INVESTIMENTO, agencia, rendaMensal, saldo);
+
+	public ContaInvestimento(String nome, String cpf, Agencia agencia, Double rendaMensal, Double valorPrimeiroDeposito)
+			throws Exception {
+		super(nome, cpf, TipoConta.INVESTIMENTO, agencia, rendaMensal, valorPrimeiroDeposito);
 		this.investimentosConta = new HashSet<>();
 	}
 
 	public Set<Investimento> getInvestimentosConta() {
 		return investimentosConta;
 	}
-	
+
 	public Investimento getInvestimento(String nomeInvestimento) throws Exception {
 
 		if (nomeInvestimento == null) {

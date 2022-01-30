@@ -4,7 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import banco.Agencia;
 import enums.TipoConta;
@@ -24,15 +23,17 @@ public abstract class Conta {
 	private Double saldo;
 	private final Set<ExtratoConta> extratosConta;
 
-	public Conta(String nome, String cpf, TipoConta tipoConta, Agencia agencia, Double rendaMensal, Double saldo) {
+	public Conta(String nome, String cpf, TipoConta tipoConta, Agencia agencia, Double rendaMensal,
+			Double valorPrimeiroDeposito) throws Exception {
 		this.nome = nome;
 		this.cpf = cpf;
 		this.tipoConta = tipoConta;
 		this.conta = UtilGeradorCodigoSequencial.gerarCodigoSequencial();
 		this.agencia = agencia;
 		this.rendaMensal = rendaMensal;
-		this.saldo = saldo;
 		this.extratosConta = new HashSet<>();
+		this.saldo = 0.0;
+		this.depositoAberturaConta(valorPrimeiroDeposito);
 	}
 
 	public String getNome() {
@@ -88,13 +89,28 @@ public abstract class Conta {
 	public Boolean deposito(Double valor) throws Exception {
 
 		if (valor > 0.0) {
-			setSaldo(getSaldo() + valor);
+			setSaldo(saldo + valor);
 			getExtratosConta().add(new ExtratoConta(getAgencia(), this, TipoOperacao.DEPOSITO, valor));
 			return true;
 		}
 
+		/*
+		 * Lógica criada para a idéia de um primeiro depósito por exemplo, onde o
+		 * usuário não pretende realizar um depósito inicial
+		 */
+
 		throw new DepositoNegativoException();
 
+	}
+
+	private Boolean depositoAberturaConta(Double valor) throws Exception {
+
+		if (valor == 0) {
+			return false;
+		}
+
+		deposito(valor);
+		return true;
 	}
 
 	/*
@@ -108,13 +124,13 @@ public abstract class Conta {
 
 		if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
 			throw new TransacaoIlegalException(
-					"Transação negada. Não é possível realizar transferências no Sábado ou Domingo.");
+					"Transação negada. Não é possível realizar transferências nos Sábados ou Domingos.");
 		}
 
 		if (destino == this) {
 			throw new TransacaoIlegalException(
 					"Transação negada. Não é possível realizar transferências para si próprio. Utilize a operação de "
-					+ "depósito.");
+							+ "depósito.");
 		}
 
 		if (saque(valor)) {
@@ -125,11 +141,6 @@ public abstract class Conta {
 		}
 
 		throw new TransacaoIlegalException();
-	}
-
-	public Set<ExtratoConta> extrato(LocalDate dataInicio, LocalDate dataFinal) {
-		return getExtratosConta().stream().filter(extrato -> extrato.getDataHoraOperacao().isAfter(dataInicio)
-				&& extrato.getDataHoraOperacao().isBefore(dataFinal)).collect(Collectors.toSet());
 	}
 
 	@Override

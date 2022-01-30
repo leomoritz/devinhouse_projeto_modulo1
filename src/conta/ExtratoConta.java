@@ -1,9 +1,10 @@
 package conta;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import banco.Agencia;
 import enums.TipoOperacao;
+import util.UtilDateTimeFormatter;
 
 public class ExtratoConta {
 
@@ -13,7 +14,7 @@ public class ExtratoConta {
 	private final Conta contaDestino;
 	private final TipoOperacao tipoOperacao;
 	private final Double valor;
-	private final LocalDate dataHoraOperacao;
+	private final LocalDateTime dataHoraOperacao;
 
 	public ExtratoConta(Agencia agenciaOrigem, Conta contaOrigem, Agencia agenciaDestino, Conta contaDestino,
 			TipoOperacao tipoOperacao, Double valor) {
@@ -23,7 +24,7 @@ public class ExtratoConta {
 		this.contaDestino = contaDestino;
 		this.tipoOperacao = tipoOperacao;
 		this.valor = valor;
-		this.dataHoraOperacao = LocalDate.now();
+		this.dataHoraOperacao = LocalDateTime.now();
 	}
 
 	public ExtratoConta(Agencia agenciaOrigem, Conta contaOrigem, TipoOperacao tipoOperacao, Double valor) {
@@ -33,7 +34,7 @@ public class ExtratoConta {
 		this.contaDestino = null;
 		this.tipoOperacao = tipoOperacao;
 		this.valor = valor;
-		this.dataHoraOperacao = LocalDate.now();
+		this.dataHoraOperacao = LocalDateTime.now();
 	}
 
 	public Agencia getAgenciaOrigem() {
@@ -60,8 +61,24 @@ public class ExtratoConta {
 		return valor;
 	}
 
-	public LocalDate getDataHoraOperacao() {
+	public LocalDateTime getDataHoraOperacao() {
 		return dataHoraOperacao;
+	}
+
+	@Override
+	public String toString() {
+		if (this.tipoOperacao.equals(TipoOperacao.TRANSFERENCIA)) {
+			return "\n\nAgencia Conta Origem: " + agenciaOrigem.toString() + "\nConta Origem: " + contaOrigem.getConta()
+					+ " - " + contaOrigem.getNome() + "\nAgencia Conta Destino: " + agenciaDestino.toString()
+					+ "\nConta Destino: " + contaDestino.getConta() + " - " + contaDestino.getNome()
+					+ "\nTipo Operação: " + tipoOperacao.name() + "\nValor Transferido: " + valor + "\nData/Hora: "
+					+ UtilDateTimeFormatter.formataDataParaString(dataHoraOperacao);
+		}
+
+		return "\n\nAgencia Conta: " + agenciaOrigem.toString() + "\nConta: " + contaOrigem.getConta() + " - "
+				+ contaOrigem.getNome() + "\nTipo Operação: " + tipoOperacao.name() + "\nValor Operação: " + valor
+				+ "\nData/Hora: " + UtilDateTimeFormatter.formataDataParaString(dataHoraOperacao);
+
 	}
 
 }

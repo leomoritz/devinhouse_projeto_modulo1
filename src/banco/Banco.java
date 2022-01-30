@@ -19,6 +19,7 @@ import investimento.OpcaoInvestimento;
 import repositorio.RepositorioAgencia;
 import repositorio.RepositorioOpcaoInvestimento;
 import util.UtilValidadorCpf;
+import util.UtilValidadorNome;
 
 public class Banco {
 
@@ -36,6 +37,7 @@ public class Banco {
 		this.contas = new HashSet<>();
 		this.historicoTransacoes = new HashSet<>();
 		this.opcoesInvestimento = new HashSet<>();
+		iniciaRepositorios();
 	}
 
 	/*
@@ -78,21 +80,33 @@ public class Banco {
 	 */
 
 	public Boolean cadastrarConta(Conta novaConta) throws Exception {
-
 		if (novaConta == null) {
 			throw new CadastroIlegalException();
-		}
-
-		if (!UtilValidadorCpf.validadorCpf(novaConta.getCpf())) {
-			throw new CadastroIlegalException(
-					"CPF inválido. Favor informe CPF no formato 99999999999 ou 999.999.999-99");
 		}
 
 		if (getContaJaExistente(novaConta).isPresent()) {
 			throw new CadastroJaExisteException();
 		}
 
+		validaNomeCpfCadastroConta(novaConta);
+
 		contas.add(novaConta);
+		return true;
+	}
+
+	public Boolean validaNomeCpfCadastroConta(Conta novaConta) throws Exception {
+
+		if (!UtilValidadorNome.validadorNome(novaConta.getNome())) {
+			throw new CadastroIlegalException(
+					"O nome informado é inválido. O nome precisa conter apenas letras e pelo menos um "
+							+ "sobrenome. Caracteres especiais são ignorados.");
+		}
+
+		if (!UtilValidadorCpf.validadorCpf(novaConta.getCpf())) {
+			throw new CadastroIlegalException(
+					"CPF inválido. Favor informe CPF com 11 dígitos no formato 99999999999 ou 999.999.999-99");
+		}
+
 		return true;
 
 	}
@@ -148,10 +162,8 @@ public class Banco {
 	 */
 
 	private Optional<Conta> getContaJaExistente(Conta novaConta) {
-		return getContas().stream()
-				.filter(contaAux -> contaAux.getCpf()
-						.equals(novaConta.getCpf() + contaAux.getTipoConta().equals(novaConta.getTipoConta())))
-				.findFirst();
+		return getContas().stream().filter(contaAux -> contaAux.getCpf().equals(novaConta.getCpf())
+				&& contaAux.getTipoConta().equals(novaConta.getTipoConta())).findFirst();
 	}
 
 	/**

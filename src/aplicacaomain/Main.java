@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import banco.Banco;
+import conta.Conta;
 import menus.MenuOperacoes;
 
 public class Main {
@@ -11,11 +12,10 @@ public class Main {
 	public static void main(String[] args) {
 
 		Locale.setDefault(Locale.US);
+
 		Scanner sc = new Scanner(System.in);
 
 		Banco devInMoney = new Banco();
-
-		devInMoney.iniciaRepositorios();
 
 		System.out.println("####### Bem vindo ao banco " + devInMoney.getNome() + " #######");
 
@@ -29,32 +29,57 @@ public class Main {
 			if (opcao == 1) {
 				try {
 					MenuOperacoes.menuCadastroConta(devInMoney);
-					opcao = MenuOperacoes.apresentaMenuNovaOperacao();
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage() + "\n");
 				}
+				opcao = MenuOperacoes.apresentaMenuNovaOperacao(1);
 			}
 
 			if (opcao == 2) {
 				try {
-					MenuOperacoes.menuCadastroConta(devInMoney);
-					opcao = MenuOperacoes.apresentaMenuNovaOperacao();
+					Conta conta = MenuOperacoes.menuAcessarConta(devInMoney);
+					MenuOperacoes.menuTransacoes(devInMoney, conta);
+					opcao = 0;
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage() + "\n");
+					opcao = MenuOperacoes.apresentaMenuNovaOperacao(2);
 				}
 			}
 
 			if (opcao == 3) {
 				try {
-					MenuOperacoes.menuCadastroConta(devInMoney);
-					opcao = MenuOperacoes.apresentaMenuNovaOperacao();
+					MenuOperacoes.consultarSaldo(devInMoney);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println(e.getMessage() + "\n");
 				}
+				opcao = MenuOperacoes.apresentaMenuNovaOperacao(3);
+			}
+
+			if (opcao == 4) {
+				try {
+					MenuOperacoes.consultarExtrato(devInMoney);
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + "\n");
+				}
+				opcao = MenuOperacoes.apresentaMenuNovaOperacao(4);
+			}
+
+			if (opcao == 5) {
+				try {
+					MenuOperacoes.menuCadastroConta(devInMoney);
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + "\n");
+					opcao = MenuOperacoes.apresentaMenuNovaOperacao(5);
+				}
+			}
+
+			if (opcao == 0) {
+				opcao = MenuOperacoes.apresentaMenuNovaOperacao();
 			}
 
 		}
 
+		System.out.println("\nO DevInMoney agradece por sua preferência! \nVolte Sempre :)");
 		sc.close();
 
 	}

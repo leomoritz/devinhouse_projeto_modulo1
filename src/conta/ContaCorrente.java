@@ -9,8 +9,9 @@ public class ContaCorrente extends Conta {
 
 	private Double chequeEspecial;
 
-	public ContaCorrente(String nome, String cpf, Agencia agencia, Double rendaMensal, Double saldo) {
-		super(nome, cpf, TipoConta.CORRENTE, agencia, rendaMensal, saldo);
+	public ContaCorrente(String nome, String cpf, Agencia agencia, Double rendaMensal, Double valorPrimeiroDeposito)
+			throws Exception {
+		super(nome, cpf, TipoConta.CORRENTE, agencia, rendaMensal, valorPrimeiroDeposito);
 		calculaChequeEspecialConta(rendaMensal * 0.10);
 	}
 
@@ -37,7 +38,7 @@ public class ContaCorrente extends Conta {
 	 * @return true somente se o saldo e o valor forem positivos e a operação não
 	 *         ultrapasse o valor do cheque especial.
 	 */
-	
+
 	@Override
 	public Boolean saque(Double valor) throws Exception {
 

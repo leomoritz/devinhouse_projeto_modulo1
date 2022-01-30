@@ -1,4 +1,4 @@
-package aplicacaomain;
+/*package aplicacaomain;
 
 import banco.Agencia;
 import banco.Banco;
@@ -70,7 +70,7 @@ public class Programa {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		
 		try {
 			System.out.println("Investimento: " + contaInvestimento.getInvestimento("X"));
@@ -81,3 +81,4 @@ public class Programa {
 	}
 
 }
+*/
