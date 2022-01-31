@@ -22,13 +22,13 @@ public class MenuOperacoes {
 	public static int apresentaMenuAbertura() {
 		System.out.print("\n1 - Cadastrar uma conta" + "\n2 - Realizar Transações" + "\n3 - Consultar Saldo"
 				+ "\n4 - Consultar Extrato" + "\n5 - Adicionar Investimentos" + "\n6 - Simular Rendimento Investimento"
-				+ "\n7 - Simular Rendimento Poupança" + "\n8 - Listar Relatórios" + "\nListar Relatórios"
+				+ "\n7 - Simular Rendimento Poupança" + "\n8 - Listar Relatórios" + "\n0 - Sair"
 				+ "\n\nDigite Opção Desejada -> ");
 		return sc.nextInt();
 	}
 
 	public static int apresentaMenuTransacoes() {
-		System.out.print("Informe o tipo de transação desejada");
+		System.out.print("\nInforme o tipo de transação desejada");
 
 		System.out.print("\n1 - Saque" + "\n2 - Depósito" + "\n3 - Transeferências" + "\n\nDigite Opção Desejada -> ");
 		return sc.nextInt();
@@ -137,7 +137,7 @@ public class MenuOperacoes {
 
 	public static Conta menuAcessarConta(Banco banco) throws Exception {
 
-		System.out.print("Informe o código da conta com a qual você deseja realizar a operação informada: ");
+		System.out.print("\nInforme o código da conta com a qual você deseja realizar a operação informada: ");
 		int codigoConta = sc.nextInt();
 
 		return banco.getContaPeloCodigo(codigoConta);
@@ -150,26 +150,26 @@ public class MenuOperacoes {
 
 		switch (opcao) {
 		case 1:
-			System.out.print("Informe o valor que deseja sacar da sua conta: ");
+			System.out.print("\nInforme o valor que deseja sacar da sua conta: ");
 			valorTransacao = sc.nextDouble();
 			conta.saque(valorTransacao);
 			break;
 		case 2:
-			System.out.print("Informe o valor que deseja depositar em sua conta: ");
+			System.out.print("\nInforme o valor que deseja depositar em sua conta: ");
 			valorTransacao = sc.nextDouble();
 			conta.deposito(valorTransacao);
 			break;
 		case 3:
-			System.out.print("Informe o código da conta para qual você deseja realizar a transferência: ");
+			System.out.print("\nInforme o código da conta para qual você deseja realizar a transferência: ");
 			int codigoOutraConta = sc.nextInt();
 			Conta outraConta = banco.getContaPeloCodigo(codigoOutraConta);
-			System.out.print("Informe o valor que você deseja transferir para a conta " + outraConta.getConta() + " - "
+			System.out.print("\nInforme o valor que você deseja transferir para a conta " + outraConta.getConta() + " - "
 					+ outraConta.getNome() + ": ");
 			valorTransacao = sc.nextDouble();
 			conta.transferir(outraConta, valorTransacao);
 			break;
 		default:
-			throw new IllegalArgumentException("Opção inválida! A opção informada não existe.");
+			throw new IllegalArgumentException("\nOpção inválida! A opção informada não existe.");
 		}
 
 		System.out.println("Transação realizada com sucesso!");
@@ -213,12 +213,14 @@ public class MenuOperacoes {
 
 	public static void adicionarInvestimento(Banco banco) throws Exception {
 
-		ContaInvestimento conta = (ContaInvestimento) menuAcessarConta(banco);
+		Conta conta = menuAcessarConta(banco);
 
 		if (!conta.getTipoConta().equals(TipoConta.INVESTIMENTO)) {
 			throw new Exception("Não é possível continuar com a operação. "
 					+ "É necessário informar uma conta investimento para esta operação.");
 		}
+		
+		ContaInvestimento contaInvestimento = (ContaInvestimento) conta;
 
 		System.out.println("Escolha uma das nossas opções de investimentos disponíveis abaixo: \n");
 
@@ -232,7 +234,7 @@ public class MenuOperacoes {
 		System.out.print("\nInforme o valor que deseja investir: R$");
 		Double valorInvestimento = sc.nextDouble();
 
-		banco.cadastrarInvestimentoConta(conta, new Investimento(opcaoInvestimento, valorInvestimento));
+		banco.cadastrarInvestimentoConta(contaInvestimento, new Investimento(opcaoInvestimento, valorInvestimento));
 
 		System.out.println("Investimento adicionado com sucesso em sua conta!");
 
@@ -240,33 +242,39 @@ public class MenuOperacoes {
 
 	public static void simularRendimentoInvestimento(Banco banco) throws Exception {
 
-		ContaInvestimento conta = (ContaInvestimento) menuAcessarConta(banco);
+		Conta conta = menuAcessarConta(banco);
 
 		if (!conta.getTipoConta().equals(TipoConta.INVESTIMENTO)) {
 			throw new Exception("Não é possível continuar com a operação. "
 					+ "É necessário informar uma conta investimento para esta operação.");
 		}
+		
+		ContaInvestimento contaInvestimento = (ContaInvestimento) conta;
 
 		System.out.println("Escolha um de seus investimentos abaixo para realizar simulação: \n");
 
-		for (Investimento i : conta.getInvestimentosConta()) {
+		for (Investimento i : contaInvestimento.getInvestimentosConta()) {
 			System.out.println(i.toString());
 		}
+		
+		sc.nextLine();
 
 		System.out.print("\nDigite o nome do investimento: ");
-		Investimento investimento = conta.getInvestimento(sc.nextLine());
+		String nomeInvestimento = sc.nextLine();
+		
+		Investimento investimento = contaInvestimento.getInvestimento(nomeInvestimento);
 
-		System.out.println("Informe a quantidade de meses: ");
+		System.out.print("Informe a quantidade de meses: ");
 		int qtdMeses = sc.nextInt();
 
 		double taxaRendimento = investimento.getOpcaoInvestimento().getTaxaRendimento();
 
-		double valorRendimento = conta.simulaRendimentoConta(qtdMeses, taxaRendimento);
+		double valorRendimento = contaInvestimento.simulaRendimentoConta(qtdMeses, taxaRendimento);
 
 		System.out.println("O rendimento do saldo atual da conta R$" + conta.getSaldo()
 				+ " com a taxa do investimento escolhido de " + taxaRendimento
 				+ " na quantidade de meses informada é: R$" + valorRendimento
-				+ " \n Total saldo daqui 6 meses considerando o saldo atual: R$"
+				+ "\nTotal saldo daqui 6 meses considerando o saldo atual: R$"
 				+ (conta.getSaldo() + valorRendimento));
 
 	}
@@ -280,10 +288,10 @@ public class MenuOperacoes {
 					+ "É necessário informar uma conta poupança para esta operação.");
 		}
 
-		System.out.println("Informe a taxa de rendimento da poupança: ");
+		System.out.print("Informe a taxa de rendimento da poupança: ");
 		double taxaRendimento = sc.nextDouble();
 
-		System.out.println("Informe a quantidade de meses para simular o rendimento do seu saldo na poupança: ");
+		System.out.print("Informe a quantidade de meses para simular o rendimento do seu saldo na poupança: ");
 		int qtdMeses = sc.nextInt();
 
 		double valorRendimento = conta.simulaRendimentoConta(qtdMeses, taxaRendimento);
@@ -291,17 +299,17 @@ public class MenuOperacoes {
 		System.out.println("O rendimento do saldo atual da conta R$" + conta.getSaldo()
 				+ " com a taxa do investimento escolhido de " + taxaRendimento
 				+ " na quantidade de meses informada é: R$" + valorRendimento
-				+ " \n Total saldo daqui 6 meses considerando o saldo atual: R$"
+				+ "\nTotal saldo daqui 6 meses considerando o saldo atual: R$"
 				+ (conta.getSaldo() + valorRendimento));
 
 	}
 
 	public static void listarRelatorios(Banco banco) throws Exception {
 
-		System.out.println("Informe qual relatório deseja listar: ");
-
 		System.out.println("\n1 - Relatório Todas as Contas" + "\n2 - Relatório Contas Negativadas"
 				+ "\n3 - Relatório Total Investido" + "\n4 - Relatório Todas Transações Por Conta");
+		
+		System.out.print("\nInforme qual relatório deseja listar: ");
 		int opcao = sc.nextInt();
 
 		switch (opcao) {
@@ -323,7 +331,8 @@ public class MenuOperacoes {
 	}
 
 	public static void listaRelatorioTodasContas(Banco banco) {
-
+		
+		System.out.println("\nTodas Contas do Banco: ");
 		for (Conta conta : banco.getContas()) {
 			System.out.println(conta.toString() + "\n");
 		}
@@ -331,7 +340,8 @@ public class MenuOperacoes {
 	}
 
 	public static void listaRelatorioContasNegativadas(Banco banco) {
-
+		
+		System.out.println("\nTodas Contas Negativadas do Banco: ");
 		for (Conta conta : banco.getContasNegativas()) {
 			System.out.println(conta.toString() + "\n");
 		}
@@ -339,7 +349,8 @@ public class MenuOperacoes {
 	}
 
 	public static void listaRelatorioTotalInvestido(Banco banco) {
-
+		
+		System.out.println("\nTotal Investimento de cada Conta Investimento do Banco: ");
 		for (Entry<Conta, Double> entry : banco.getTotalInvestimentoConta().entrySet()) {
 			System.out.println("Conta: " + entry.getKey() + " | Total Investido R$" + entry.getValue() + "\n");
 		}
@@ -350,6 +361,7 @@ public class MenuOperacoes {
 		
 		Conta conta = menuAcessarConta(banco);
 		
+		System.out.println("\nTodas Transferências da Conta: " + conta.getConta() + " - " + conta.getNome());
 		for (Transacao transacao : banco.getTransacoesConta(conta)) {
 			System.out.println(transacao.toString() + "\n");
 		}

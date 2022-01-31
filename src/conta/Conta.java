@@ -22,6 +22,7 @@ public abstract class Conta {
 	private Double rendaMensal;
 	private Double saldo;
 	private final Set<ExtratoConta> extratosConta;
+	private final Set<Transacao> transacoesConta;
 
 	public Conta(String nome, String cpf, TipoConta tipoConta, Agencia agencia, Double rendaMensal,
 			Double valorPrimeiroDeposito) throws Exception {
@@ -32,6 +33,7 @@ public abstract class Conta {
 		this.agencia = agencia;
 		this.rendaMensal = rendaMensal;
 		this.extratosConta = new HashSet<>();
+		this.transacoesConta = new HashSet<>();
 		this.saldo = 0.0;
 		this.depositoAberturaConta(valorPrimeiroDeposito);
 	}
@@ -84,6 +86,10 @@ public abstract class Conta {
 		return extratosConta;
 	}
 
+	public Set<Transacao> getTransacoesConta() {
+		return transacoesConta;
+	}
+
 	public abstract Boolean saque(Double valor) throws Exception;
 
 	public Boolean deposito(Double valor) throws Exception {
@@ -122,10 +128,10 @@ public abstract class Conta {
 
 		DayOfWeek diaAtualDaSemana = LocalDate.now().getDayOfWeek();
 
-		if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
+		/*if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
 			throw new TransacaoIlegalException(
 					"Transação negada. Não é possível realizar transferências nos Sábados ou Domingos.");
-		}
+		}*/
 
 		if (destino == this) {
 			throw new TransacaoIlegalException(
@@ -137,6 +143,7 @@ public abstract class Conta {
 			destino.deposito(valor);
 			getExtratosConta().add(new ExtratoConta(getAgencia(), this, destino.getAgencia(), destino,
 					TipoOperacao.TRANSFERENCIA, valor));
+			getTransacoesConta().add(new Transacao(this, destino, valor));
 			return true;
 		}
 
