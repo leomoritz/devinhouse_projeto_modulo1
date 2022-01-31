@@ -128,10 +128,10 @@ public abstract class Conta {
 
 		DayOfWeek diaAtualDaSemana = LocalDate.now().getDayOfWeek();
 
-		/*if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
+		if (diaAtualDaSemana == DayOfWeek.SATURDAY || diaAtualDaSemana == DayOfWeek.SUNDAY) {
 			throw new TransacaoIlegalException(
 					"Transação negada. Não é possível realizar transferências nos Sábados ou Domingos.");
-		}*/
+		}
 
 		if (destino == this) {
 			throw new TransacaoIlegalException(
