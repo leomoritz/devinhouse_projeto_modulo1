@@ -362,7 +362,7 @@ public class MenuOperacoes {
 		Conta conta = menuAcessarConta(banco);
 		
 		System.out.println("\nTodas Transferências da Conta: " + conta.getConta() + " - " + conta.getNome());
-		for (Transacao transacao : banco.getTransacoesConta(conta)) {
+		for (Transacao transacao : conta.getTransacoesConta()) {
 			System.out.println(transacao.toString() + "\n");
 		}
 
