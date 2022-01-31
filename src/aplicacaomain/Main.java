@@ -49,6 +49,7 @@ public class Main {
 			if (opcao == 3) {
 				try {
 					MenuOperacoes.consultarSaldo(devInMoney);
+					opcao = 0;
 				} catch (Exception e) {
 					System.out.println(e.getMessage() + "\n");
 				}
@@ -58,6 +59,7 @@ public class Main {
 			if (opcao == 4) {
 				try {
 					MenuOperacoes.consultarExtrato(devInMoney);
+					opcao = 0;
 				} catch (Exception e) {
 					System.out.println(e.getMessage() + "\n");
 				}
@@ -66,10 +68,41 @@ public class Main {
 
 			if (opcao == 5) {
 				try {
-					MenuOperacoes.menuCadastroConta(devInMoney);
+					MenuOperacoes.adicionarInvestimento(devInMoney);
+					opcao = 0;
 				} catch (Exception e) {
 					System.out.println(e.getMessage() + "\n");
 					opcao = MenuOperacoes.apresentaMenuNovaOperacao(5);
+				}
+			}
+			
+			if (opcao == 6) {
+				try {
+					MenuOperacoes.simularRendimentoInvestimento(devInMoney);
+					opcao = 0;
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + "\n");
+					opcao = MenuOperacoes.apresentaMenuNovaOperacao(6);
+				}
+			}
+			
+			if (opcao == 7) {
+				try {
+					MenuOperacoes.simularRendimentoPoupanca(devInMoney);
+					opcao = 0;
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + "\n");
+					opcao = MenuOperacoes.apresentaMenuNovaOperacao(7);
+				}
+			}
+			
+			if (opcao == 8) {
+				try {
+					MenuOperacoes.listarRelatorios(devInMoney);
+					opcao = 0;
+				} catch (Exception e) {
+					System.out.println(e.getMessage() + "\n");
+					opcao = MenuOperacoes.apresentaMenuNovaOperacao(8);
 				}
 			}
 

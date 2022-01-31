@@ -68,14 +68,14 @@ public class ExtratoConta {
 	@Override
 	public String toString() {
 		if (this.tipoOperacao.equals(TipoOperacao.TRANSFERENCIA)) {
-			return "\n\nAgencia Conta Origem: " + agenciaOrigem.toString() + "\nConta Origem: " + contaOrigem.getConta()
+			return "\nAgencia Conta Origem: " + agenciaOrigem.toString() + "\nConta Origem: " + contaOrigem.getConta()
 					+ " - " + contaOrigem.getNome() + "\nAgencia Conta Destino: " + agenciaDestino.toString()
 					+ "\nConta Destino: " + contaDestino.getConta() + " - " + contaDestino.getNome()
 					+ "\nTipo Operação: " + tipoOperacao.name() + "\nValor Transferido: " + valor + "\nData/Hora: "
 					+ UtilDateTimeFormatter.formataDataParaString(dataHoraOperacao);
 		}
 
-		return "\n\nAgencia Conta: " + agenciaOrigem.toString() + "\nConta: " + contaOrigem.getConta() + " - "
+		return "\nAgencia Conta: " + agenciaOrigem.toString() + "\nConta: " + contaOrigem.getConta() + " - "
 				+ contaOrigem.getNome() + "\nTipo Operação: " + tipoOperacao.name() + "\nValor Operação: " + valor
 				+ "\nData/Hora: " + UtilDateTimeFormatter.formataDataParaString(dataHoraOperacao);
 

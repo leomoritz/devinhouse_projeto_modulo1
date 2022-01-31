@@ -70,7 +70,7 @@ public class ContaInvestimento extends Conta implements SimulacaoRendimentoConta
 					+ "A quantidade de meses e a taxa de rendimento precisam ser maior que zero");
 		}
 
-		return taxaRendimento * qtdMeses;
+		return (getSaldo() * (taxaRendimento / 100)) * qtdMeses;
 	}
 
 }

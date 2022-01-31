@@ -63,16 +63,43 @@ public class Banco {
 		return agencias;
 	}
 
-	public Set<Conta> getContas() {
-		return contas;
-	}
-
 	public Set<Transacao> getHistoricoTransacoes() {
 		return historicoTransacoes;
 	}
 
 	public Set<OpcaoInvestimento> getOpcoesInvestimento() {
 		return opcoesInvestimento;
+	}
+
+	/*
+	 * Métodos para listagem de relatórios
+	 */
+
+	public Set<Conta> getContas() {
+		return contas;
+	}
+
+	public Set<Conta> getContasNegativas() {
+		return getContas().stream().filter(conta -> conta.getSaldo() < 0).collect(Collectors.toSet());
+	}
+
+	public Map<Conta, Double> getTotalInvestimentoConta() {
+
+		Set<Conta> contasInvestimento = getContas().stream()
+				.filter(conta -> conta.getTipoConta().equals(TipoConta.INVESTIMENTO)).collect(Collectors.toSet());
+
+		Map<Conta, Double> totalInvestimentosConta = new HashMap<>();
+
+		for (Conta i : contasInvestimento) {
+			totalInvestimentosConta.put(i, i.getSaldo());
+		}
+
+		return totalInvestimentosConta;
+
+	}
+
+	public Set<Transacao> getTransacoesConta(Conta conta) {
+		return getHistoricoTransacoes().stream().filter(contaAux -> contaAux.equals(conta)).collect(Collectors.toSet());
 	}
 
 	/*
@@ -119,6 +146,7 @@ public class Banco {
 
 		if (investimento.getOpcaoInvestimento() != null && investimento.getValorInvestido() != 0.0) {
 			conta.adicionarInvestimento(investimento);
+			return true;
 		}
 
 		throw new CadastroIlegalException();
@@ -150,6 +178,19 @@ public class Banco {
 
 		if (agencia.isPresent()) {
 			return agencia.get();
+		}
+
+		throw new CadastroInexistenteException();
+
+	}
+
+	public OpcaoInvestimento getOpcaoInvestimentoPeloCodigo(Integer codigo) throws CadastroInexistenteException {
+
+		Optional<OpcaoInvestimento> opcao = getOpcoesInvestimento().stream()
+				.filter(opcaoAux -> opcaoAux.getCodigoInvestimento().equals(codigo)).findFirst();
+
+		if (opcao.isPresent()) {
+			return opcao.get();
 		}
 
 		throw new CadastroInexistenteException();
@@ -199,36 +240,4 @@ public class Banco {
 		}
 
 	}
-
-	/*
-	 * Métodos para listagem de relatórios
-	 */
-
-	public String listarRelatorioContas() {
-		return "Relatório de Contas cadastradas no Banco:" + getContas().stream().toString();
-	}
-
-	public String listarRelatorioContasNegativas() {
-		return "Relatório de Contas Negativas:" + getContas().stream().filter(conta -> conta.getSaldo() < 0).toString();
-	}
-
-	public String listaTotalInvestimentosContas() {
-
-		Set<Conta> contasInvestimento = getContas().stream()
-				.filter(conta -> conta.getTipoConta().equals(TipoConta.INVESTIMENTO)).collect(Collectors.toSet());
-
-		Map<Conta, Double> totalInvestimentosConta = new HashMap<>();
-
-		for (Conta i : contasInvestimento) {
-			totalInvestimentosConta.put(i, i.getSaldo());
-		}
-
-		return "Relatório Total Investimentos da Conta:" + totalInvestimentosConta.entrySet().stream().toString();
-
-	}
-
-	public String listarRelatorioTransacoesConta(Conta conta) {
-		return "Relatório de Transações da Conta:" + getHistoricoTransacoes().toString();
-	}
-
 }
